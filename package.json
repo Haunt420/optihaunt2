@@ -1,0 +1,16 @@
+{
+  "name": "kenzen-cockpit-perchance",
+  "version": "1.0.0",
+  "description": "KENZEN Cockpit prompt engineering assistant for Perchance.org",
+  "main": "www/index.html",
+  "scripts": {
+    "build": "npx cap copy",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

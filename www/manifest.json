@@ -1,0 +1,21 @@
+{
+  "name": "KENZEN Cockpit for Perchance",
+  "short_name": "KENZEN",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0e0c",
+  "theme_color": "#0b0e0c",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230b0e0c'/%3E%3Cpath d='M44 48h24v42l38-42h30L90 94l50 50h-32l-40-42v42H44V48z' fill='%2367d898'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230b0e0c'/%3E%3Cpath d='M118 128h64v112l102-112h80L240 252l134 132h-86l-106-112v112h-64V128z' fill='%2367d898'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

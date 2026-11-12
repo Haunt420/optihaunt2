@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>KENZEN Cockpit Mobile - Perchance Studio</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0b0e0c;
+      --surface: #141a15;
+      --surface2: #1c241d;
+      --border: #2b3a30;
+      --border-accent: #3d5445;
+      --accent: #67d898;
+      --accent-dim: rgba(103, 216, 152, 0.15);
+      --accent-bright: #8be3ae;
+      --amber: #d99a4e;
+      --amber-dim: rgba(217, 154, 78, 0.15);
+      --text: #f3ead9;
+      --text-muted: #9ca3af;
+      --danger: #f87171;
+      --radius: 12px;
+      --touch-min: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Fredoka', 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-bottom: 240px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 14, 12, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+    }
+
+    .brand span {
+      font-size: 11px;
+      color: var(--amber);
+      background: var(--amber-dim);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(217,154,78,0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-header {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-header:active {
+      transform: scale(0.96);
+    }
+
+    .search-box {
+      padding: 10px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 42px;
+      background: var(--bg);
+      border: 1px solid var(--border-accent);
+      border-radius: 21px;
+      color: var(--text);
+      padding: 0 40px 0 16px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      user-select: auto;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-dim);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .cat-nav {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cat-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-pill {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: var(--touch-min);
+    }
+
+    .cat-pill.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent-bright);
+    }
+
+    .matrix-container {
+      padding: 12px 14px;
+      flex: 1;
+    }
+
+    .category-group {
+      margin-bottom: 24px;
+    }
+
+    .group-header {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--amber);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .group-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      min-height: 44px;
+      transition: background 0.12s, border-color 0.12s, transform 0.08s;
+    }
+
+    .tag-chip:active {
+      transform: scale(0.95);
+    }
+
+    .tag-chip.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(103,216,152,0.25);
+    }
+
+    .tag-en {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .tag-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .tag-chip.mature {
+      border-left: 3px solid #ff71ce;
+    }
+
+    .cockpit {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: rgba(20, 26, 21, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1.5px solid var(--border-accent);
+      padding: 10px 14px max(10px, env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cockpit-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .mode-selector {
+      display: flex;
+      background: var(--bg);
+      padding: 2px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #0b0e0c;
+      font-weight: 700;
+    }
+
+    .history-btns {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn-ctrl {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-ctrl:disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .cockpit-box {
+      width: 100%;
+      height: 72px;
+      background: var(--bg);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+      outline: none;
+      resize: none;
+      user-select: auto;
+    }
+
+    .cockpit-box:focus {
+      border-color: var(--accent);
+    }
+
+    .cockpit-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-action {
+      flex: 1;
+      height: var(--touch-min);
+      border-radius: 8px;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-copy {
+      background: var(--accent);
+      color: #0b0e0c;
+    }
+
+    .btn-send {
+      background: linear-gradient(140deg, #d99a4e, #b06a24);
+      color: #fff;
+    }
+
+    .btn-clear {
+      flex: 0 0 44px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--danger);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 250px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1c2620;
+      color: #cfffe4;
+      border: 1px solid rgba(103,216,152,0.6);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 300;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: flex-end;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s linear 0.2s, opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      background: var(--surface);
+      border-top: 2px solid var(--accent);
+      border-radius: 16px 16px 0 0;
+      padding: 16px;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+
+    .modal-overlay.open .modal-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .gen-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .gen-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .gen-card:active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .gen-icon {
+      font-size: 24px;
+    }
+
+    .gen-info h4 {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .gen-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .inspector-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .inspector-overlay.open {
+      display: flex;
+    }
+
+    .inspector-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border-accent);
+      border-radius: 16px 16px 0 0;
+      width: 100%;
+      max-width: 500px;
+      padding: 16px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    .inspector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .inspector-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .inspector-sub {
+      font-size: 11px;
+      color: var(--amber);
+    }
+
+    .inspector-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .ins-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .ins-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .ins-btn {
+      flex: 1;
+      padding: 8px 4px;
+      font-size: 11.5px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .ins-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent-bright);
+      font-weight: 700;
+    }
+
+    .ins-preview {
+      background: var(--bg);
+      border: 1px dashed var(--border-accent);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 14px;
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--accent-bright);
+    }
+
+    .inspector-footer {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .ins-action-btn {
+      flex: 1;
+      height: var(--touch-min);
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .ins-save {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .ins-del {
+      background: rgba(248,113,113,0.15);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <h1>KENZEN Cockpit</h1>
+      <span>Perchance</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header" id="btnSort">Precedence</button>
+      <button class="btn-header" id="btnProse">Prose</button>
+    </div>
+  </header>
+
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search across all 41 categories..." autocomplete="off">
+      <button class="search-clear" id="searchClear" style="display: none;">✕</button>
+    </div>
+  </div>
+
+  <nav class="cat-nav" id="catNav"></nav>
+  <main class="matrix-container" id="matrixContainer"></main>
+
+  <div class="cockpit">
+    <div class="cockpit-toolbar">
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="flux">Flux Prose</button>
+        <button class="mode-btn" data-mode="mack">Mack's Slots</button>
+        <button class="mode-btn" data-mode="danbooru">Tags Comma</button>
+        <button class="mode-btn" data-mode="dynamic">Dynamic Perm</button>
+      </div>
+      <div class="history-btns">
+        <button class="btn-ctrl" id="btnUndo" title="Undo" disabled>Undo</button>
+        <button class="btn-ctrl" id="btnRedo" title="Redo" disabled>Redo</button>
+      </div>
+    </div>
+
+    <textarea class="cockpit-box" id="promptBox" placeholder="Tap tags above to assemble your prompt... (Tap: comma, Long-press: inspector)"></textarea>
+
+    <div class="cockpit-actions">
+      <button class="btn-action btn-clear" id="btnClear" title="Clear All">Clear</button>
+      <button class="btn-action btn-copy" id="btnCopy">Copy</button>
+      <button class="btn-action btn-send" id="btnSend">Launch Generator</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard</div>
+
+  <div class="modal-overlay" id="dispatchModal">
+    <div class="modal-sheet">
+      <div class="sheet-title">
+        <span>Launch Perchance Studio</span>
+        <button id="modalClose" style="background:none; border:none; color:var(--text); font-size:18px;">✕</button>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+        Choose your target generator. Your compiled prompt will be copied and transferred:
+      </p>
+      <div class="gen-grid">
+        <div class="gen-card" data-url="https://perchance.org/mack-mcgenerator">
+          <div class="gen-icon">Primary</div>
+          <div class="gen-info">
+            <h4>Mack's Place</h4>
+            <p>Primary target. Full support for custom styles and multi-slot layouts.</p>
+          </div>
+        </div>
+        <div class="gen-card" data-url="https://perchance.org/ai-real-revolution">
+          <div class="gen-icon">Studio</div>
+          <div class="gen-info">
+            <h4>AI Real Revolution</h4>
+            <p>Dual description panels, camera, film, and face reference.</p>
+          </div>
+        </div>
+        <div class="gen-card" data-url="https://perchance.org/qinegen">
+          <div class="gen-icon">Multi</div>
+          <div class="gen-info">
+            <h4>Qinegen</h4>
+            <p>Multi-angle generation, character chat, and style tester.</p>
+          </div>
+        </div>
+        <div class="gen-card" data-url="https://perchance.org/ai-artgen">
+          <div class="gen-icon">Direct</div>
+          <div class="gen-info">
+            <h4>AI Artgen</h4>
+            <p>Clean and rapid text-to-image generator.</p>
+          </div>
+        </div>
+        <div class="gen-card" data-url="https://perchance.org/urvillain-imagine">
+          <div class="gen-icon">Stylized</div>
+          <div class="gen-info">
+            <h4>Urvillain Imagine</h4>
+            <p>Atmospheric dark UI with Soul Notes and Desire Box system.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inspector-overlay" id="inspectorModal">
+    <div class="inspector-card" role="dialog" aria-modal="true">
+      <div class="inspector-header">
+        <div>
+          <h3 class="inspector-title" id="insTitle">Tag Title</h3>
+          <span class="inspector-sub" id="insSub">Subcategory</span>
+        </div>
+        <button type="button" class="inspector-close" id="insClose">✕</button>
+      </div>
+
+      <div class="inspector-body">
+        <label class="ins-label">Connection Syntax:</label>
+        <div class="ins-btn-group">
+          <button type="button" class="ins-btn active" data-sep="comma">Comma (,)</button>
+          <button type="button" class="ins-btn" data-sep="space">Preposition Space ( )</button>
+          <button type="button" class="ins-btn" data-sep="curly">Alternation {A|B}</button>
+        </div>
+
+        <label class="ins-label" style="margin-top: 14px;">
+          Prompt Emphasis Weight: <span id="weightVal" style="color:var(--accent);">1.0</span>
+        </label>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="range" id="insWeightSlider" min="0.5" max="1.8" step="0.05" value="1.0" style="flex:1;">
+          <button type="button" class="btn-ctrl" id="insResetWeight" style="flex:0 0 auto;">1.0</button>
+        </div>
+
+        <div class="ins-preview" id="insPreview">tag preview</div>
+      </div>
+
+      <div class="inspector-footer">
+        <button type="button" class="ins-action-btn ins-del" id="insRemove">Remove</button>
+        <button type="button" class="ins-action-btn ins-save" id="insApply">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const KENZEN_MATRIX = [
+      {
+        idx: 0, catEn: "Connectors & Grammar", slot: "Main",
+        tags: [
+          { en: "holding", hint: "grasping in hand" }, { en: "wearing", hint: "dressed in" },
+          { en: "sitting on", hint: "seated on surface" }, { en: "standing on", hint: "upright on ground" },
+          { en: "leaning against", hint: "resting back against" }, { en: "lying on", hint: "reclined horizontally" },
+          { en: "looking at", hint: "directing gaze toward" }, { en: "covered in", hint: "coated or splashed with" },
+          { en: "in the middle of", hint: "caught mid-action" }, { en: "surrounded by", hint: "encircled by elements" },
+          { en: "partially hidden by", hint: "occluded or peeking" }, { en: "tied to", hint: "bound to structure" }
+        ]
+      },
+      {
+        idx: 1, catEn: "Style & Media Anchor", slot: "Style",
+        tags: [
+          { en: "candid 35mm film photograph", hint: "Natural realism anchor" },
+          { en: "Kodak Portra 400 color negative", hint: "Warm realistic skin tones" },
+          { en: "cinematic film still", hint: "Anamorphic widescreen lighting" },
+          { en: "retro 90s anime cel shading", hint: "Vintage hand-drawn anime look" },
+          { en: "Makoto Shinkai aesthetic", hint: "Vivid skies and rich atmosphere" },
+          { en: "seinen manga line art", hint: "Detailed ink hatching and tone" },
+          { en: "Unreal Engine 5 hyperreal render", hint: "Path-traced 3D specular depth" },
+          { en: "soft impasto oil painting", hint: "Visible textural brushwork" },
+          { en: "fine art watercolor wash", hint: "Subtle pigment granulation" },
+          { en: "direct on-camera flash snapshot", hint: "Raw direct flash exposure" }
+        ]
+      },
+      {
+        idx: 2, catEn: "Subject & Quantity", slot: "Subject",
+        tags: [
+          { en: "1girl", hint: "Solo female subject" }, { en: "solo", hint: "Single subject in frame" },
+          { en: "mature woman", hint: "Late 20s to 30s woman" }, { en: "young woman", hint: "Early 20s woman" },
+          { en: "couple", hint: "Two subjects together" }, { en: "2girls", hint: "Pair of females" },
+          { en: "curvy woman", hint: "Voluptuous proportions" }, { en: "petite woman", hint: "Delicate shorter frame" },
+          { en: "tall athletic woman", hint: "Toned limbs and posture" }, { en: "female focus", hint: "Dominant female focus" }
+        ]
+      },
+      {
+        idx: 3, catEn: "Character Archetype", slot: "Subject",
+        tags: [
+          { en: "tsundere personality", hint: "Defiant blushing expression" },
+          { en: "kuudere aloof girl", hint: "Stoic, calm and quiet" },
+          { en: "yandere obsession", hint: "Intense possessive gaze" },
+          { en: "gyaru with dark eyeliner", hint: "Fashionable tanned style" },
+          { en: "traditional shrine maiden", hint: "Ritual sacred clothing" },
+          { en: "obedient french maid", hint: "Frilled classic uniform" },
+          { en: "strict office lady", hint: "Tailored corporate elegance" },
+          { en: "honorable female knight", hint: "Noble armored warrior" },
+          { en: "succubus demoness", hint: "Demonic alluring aesthetics" },
+          { en: "pure high school senior", hint: "Classic school uniform look" }
+        ]
+      },
+      {
+        idx: 4, catEn: "Age & Build Specs", slot: "Subject",
+        tags: [
+          { en: "20-years-old", hint: "Specific adult benchmark" },
+          { en: "24-years-old", hint: "Mid-twenties visual definition" },
+          { en: "early thirties", hint: "Mature refined character" },
+          { en: "petite frame with narrow shoulders", hint: "Delicate skeletal frame" },
+          { en: "statuesque tall frame", hint: "Long limbs and high posture" },
+          { en: "wide skeletal pelvis", hint: "Natural wide hip structure" }
+        ]
+      },
+      {
+        idx: 5, catEn: "Facial Anatomy", slot: "Subject",
+        tags: [
+          { en: "heart-shaped face with soft jawline", hint: "Feminine contour" },
+          { en: "high sculpted cheekbones", hint: "Defined bone structure" },
+          { en: "delicate petite nose", hint: "Small balanced nose" },
+          { en: "plump natural lips", hint: "Full mouth curvature" },
+          { en: "prominent beauty mark under left eye", hint: "Facial mole accent" },
+          { en: "subtle dimples when smiling", hint: "Natural cheek indentations" },
+          { en: "defined collarbones", hint: "Prominent clavicle lines" }
+        ]
+      },
+      {
+        idx: 6, catEn: "Eyes & Gaze", slot: "Subject",
+        tags: [
+          { en: "looking directly at viewer", hint: "Frontal gaze engagement" },
+          { en: "seductive sidelong glance", hint: "Playful sideways look" },
+          { en: "deep cerulean blue eyes", hint: "Vivid blue iris texture" },
+          { en: "warm golden amber eyes", hint: "Luminous amber tone" },
+          { en: "half-closed heavy-lidded eyes", hint: "Bedroom drowsy eyes" },
+          { en: "tear-filled glistening eyes", hint: "Reflective moist pupils" },
+          { en: "dilated pupils with excitement", hint: "Expanded pupil aperture" },
+          { en: "long dark natural eyelashes", hint: "Dense dark lash fringe" }
+        ]
+      },
+      {
+        idx: 7, catEn: "Expression & Blush", slot: "Pose",
+        tags: [
+          { en: "parted lips showing teeth edge", hint: "Slightly open mouth" },
+          { en: "intense red facial blush", hint: "Warm flush over cheeks and nose" },
+          { en: "subtle teasing smirk", hint: "Playful half-smile" },
+          { en: "embarrassed timid expression", hint: "Flustered downcast look" },
+          { en: "ecstatic blissful expression", hint: "Elevated euphoric gaze" },
+          { en: "biting bottom lip", hint: "Aroused lip bite" },
+          { en: "pouting lips with furrowed brows", hint: "Cute petulant pout" }
+        ]
+      },
+      {
+        idx: 8, catEn: "Hairstyle", slot: "Subject",
+        tags: [
+          { en: "long loose wavy hair draped over shoulders", hint: "Flowing textured waves" },
+          { en: "high twin tails with ribbons", hint: "Dual elevated pigtails" },
+          { en: "sleek chin-length bob cut", hint: "Clean geometric edge" },
+          { en: "messy bedroom updo with loose strands", hint: "Casual bun with flyaways" },
+          { en: "thick side braid resting on chest", hint: "Single plaited braid" },
+          { en: "traditional hime cut with straight bangs", hint: "Sidelocks and straight fringe" },
+          { en: "pixie undercut", hint: "Short textured crop" }
+        ]
+      },
+      {
+        idx: 9, catEn: "Hair Color & Accents", slot: "Subject",
+        tags: [
+          { en: "platinum silver-white hair", hint: "Bright reflective silver" },
+          { en: "silky jet-black hair with blue sheen", hint: "Deep raven black" },
+          { en: "rich chestnut brown hair", hint: "Warm glossy brunette" },
+          { en: "golden honey blonde hair", hint: "Warm sunlit golden tones" },
+          { en: "subtle pink gradient tips", hint: "Dyed lower tips" },
+          { en: "black velvet hair ribbon", hint: "Tied accent ribbon" },
+          { en: "single ahoge hair antenna", hint: "Curving stray hair strand" }
+        ]
+      },
+      {
+        idx: 10, catEn: "Fantasy & Kemonomimi", slot: "Subject",
+        tags: [
+          { en: "pointed elf ears with small earrings", hint: "Long elven ear tips" },
+          { en: "soft furry cat ears matching hair", hint: "Feline ears on head" },
+          { en: "curled obsidian demon horns", hint: "Dark sweeping horns" },
+          { en: "bushy fox tail curling behind", hint: "Fluffy kitsune tail" },
+          { en: "delicate translucent fairy wings", hint: "Gossamer winged structure" },
+          { en: "floating radiant halo", hint: "Angelic crown of light" }
+        ]
+      },
+      {
+        idx: 11, catEn: "Skin Tone & Complexion", slot: "Subject",
+        tags: [
+          { en: "fair porcelain skin with pink undertones", hint: "Milky translucent skin" },
+          { en: "golden warm-toned tan skin", hint: "Sun-kissed bronze" },
+          { en: "smooth silky skin without blemishes", hint: "Clean even surface" },
+          { en: "light dusting of sun freckles across nose", hint: "Natural bridge freckles" },
+          { en: "soft dewy skin surface", hint: "Hydrated natural glow" }
+        ]
+      },
+      {
+        idx: 12, catEn: "Body Build & Proportion", slot: "Subject",
+        tags: [
+          { en: "pronounced hourglass silhouette", hint: "Curved waist-to-hip ratio" },
+          { en: "slender dancer build with long limbs", hint: "Lean flexible frame" },
+          { en: "soft curvy body with plush thighs", hint: "Plump feminine curves" },
+          { en: "firm toned athletic abdomen", hint: "Light abdominal definition" },
+          { en: "petite frame with soft belly curve", hint: "Natural soft lower torso" }
+        ]
+      },
+      {
+        idx: 13, catEn: "Chest & Breast Shaping", slot: "Subject",
+        tags: [
+          { en: "natural teardrop-shaped breasts", hint: "Anatomically relaxed slope" },
+          { en: "large heavy breasts with natural sag", hint: "Full gravitational hang" },
+          { en: "medium perky breasts", hint: "Balanced upright form" },
+          { en: "petite breasts with delicate slope", hint: "Small cup proportion" },
+          { en: "prominent cleavage spillover", hint: "Deep compressed bust line" },
+          { en: "visible sideboob curve", hint: "Lateral breast contour" }
+        ]
+      },
+      {
+        idx: 14, catEn: "Chest Detail & Areolae", slot: "Subject",
+        tags: [
+          { en: "erect hard nipples protruding", hint: "Prominent pointed tips" },
+          { en: "small pale pink areolae", hint: "Delicate light pigmentation" },
+          { en: "puffy soft areolae", hint: "Puffy rounded breast centers" },
+          { en: "erect nipples pressing against fabric", hint: "Outlined through clothing" },
+          { en: "flushed pink skin around chest", hint: "Warm red chest coloration" }
+        ]
+      },
+      {
+        idx: 15, catEn: "Waist, Hips & Buttocks", slot: "Subject",
+        tags: [
+          { en: "narrow tapered waistline", hint: "Cinched narrow torso" },
+          { en: "wide curving hips", hint: "Broad feminine hip flare" },
+          { en: "round plump buttocks", hint: "Full rounded glutes" },
+          { en: "deeply arched lower back", hint: "Pronounced back curve" },
+          { en: "thick soft thighs touching together", hint: "Thigh contact line" }
+        ]
+      },
+      {
+        idx: 16, catEn: "Intimate Anatomy", slot: "Subject",
+        tags: [
+          { en: "completely shaved bare mound", hint: "Smooth hairless skin" },
+          { en: "neatly trimmed triangle of pubic hair", hint: "Manicured triangular patch" },
+          { en: "defined anatomical seam through fabric", hint: "Tight fabric indentation" },
+          { en: "glistening wet intimate folds slightly parted", hint: "Moist exposed intimacy" },
+          { en: "visible moisture between inner thighs", hint: "Arousal moisture trail" }
+        ]
+      },
+      {
+        idx: 17, catEn: "Bodily Sheen & Secretions", slot: "Pose",
+        tags: [
+          { en: "beads of sweat rolling down cleavage", hint: "Translucent sweat droplets" },
+          { en: "dewy glistening skin sheen", hint: "Moist surface light reflections" },
+          { en: "tears welling at corner of eyes", hint: "Emotional glossy tears" },
+          { en: "saliva trail connecting parted lips", hint: "Delicate moisture string" },
+          { en: "dripping wet body fresh from water", hint: "Completely soaked skin" }
+        ]
+      },
+      {
+        idx: 18, catEn: "Jackets & Outerwear", slot: "Fashion",
+        tags: [
+          { en: "classic beige trench coat open at front", hint: "Unbuttoned draped coat" },
+          { en: "cropped distressed denim jacket", hint: "Faded casual jean jacket" },
+          { en: "oversized chunky wool cardigan hanging off shoulder", hint: "Slouchy knitwear" },
+          { en: "fitted black leather biker jacket", hint: "Zip-up moto jacket" },
+          { en: "tailored sharp-shouldered blazer", hint: "Formal executive cut" }
+        ]
+      },
+      {
+        idx: 19, catEn: "Tops & Blouses", slot: "Fashion",
+        tags: [
+          { en: "loose oversized white button-down shirt", hint: "Boyfriend shirt style" },
+          { en: "ribbed knit off-shoulder sweater", hint: "Exposed clavicle sweater" },
+          { en: "translucent white silk blouse", hint: "Semi-sheer luxury fabric" },
+          { en: "tight black sleeveless tank top", hint: "Form-fitting ribbed cotton" },
+          { en: "deep plunge v-neck halter top", hint: "Low-cut neckline" }
+        ]
+      },
+      {
+        idx: 20, catEn: "Bottoms & Skirts", slot: "Fashion",
+        tags: [
+          { en: "high-waisted pleated navy miniskirt", hint: "Short pleated school skirt" },
+          { en: "tight distressed denim cutoff shorts", hint: "Cheeky denim shorts" },
+          { en: "black leather pencil skirt with back slit", hint: "Fitted office skirt" },
+          { en: "flowing side-slit maxi skirt", hint: "Leg-revealing hemline" }
+        ]
+      },
+      {
+        idx: 21, catEn: "Dresses & Gowns", slot: "Fashion",
+        tags: [
+          { en: "backless silk evening gown with high leg slit", hint: "Formal open-back dress" },
+          { en: "fitted red cheongsam qipao with gold embroidery", hint: "High-neck silk gown" },
+          { en: "light floral cotton sundress with thin straps", hint: "Casual summer dress" },
+          { en: "tight virgin killer knit sweater dress", hint: "Deep back cutout knit" }
+        ]
+      },
+      {
+        idx: 22, catEn: "Uniforms & Workwear", slot: "Fashion",
+        tags: [
+          { en: "Japanese sailor school uniform with red kerchief", hint: "Sailor collar uniform" },
+          { en: "classic french maid uniform with lace ruffles apron", hint: "Frilled monochrome maid" },
+          { en: "white clinic nurse uniform with cap", hint: "Hospital medical attire" },
+          { en: "sleek airline flight attendant uniform", hint: "Formal skirt suit and scarf" },
+          { en: "cheerleader uniform with crop top and pleated skirt", hint: "Sporty spirit outfit" }
+        ]
+      },
+      {
+        idx: 23, catEn: "Cosplay & Costumes", slot: "Fashion",
+        tags: [
+          { en: "glossy black vinyl bunny girl bodysuit with ears", hint: "Classic bunny suit" },
+          { en: "ornate gothic lolita dress with tiered petticoats", hint: "Victorian lace silhouette" },
+          { en: "intricate polished fantasy steel plate armor", hint: "Fitted metal cuirass" },
+          { en: "hooded crimson velvet witch cloak", hint: "Flowing occult robes" }
+        ]
+      },
+      {
+        idx: 24, catEn: "Swimwear & Beachwear", slot: "Fashion",
+        tags: [
+          { en: "skimpy triangle string bikini", hint: "Minimal string bikini" },
+          { en: "high-cut leg competition one-piece swimsuit", hint: "Sporty high-cut nylon" },
+          { en: "strapless bandeau bikini top with tie sides", hint: "Shoulderless swimwear" },
+          { en: "translucent white swimsuit wet and clinging to body", hint: "Wet semi-sheer lycra" }
+        ]
+      },
+      {
+        idx: 25, catEn: "Lingerie & Undergarments", slot: "Fashion",
+        tags: [
+          { en: "sheer black lace bra and matching panties set", hint: "Detailed embroidery set" },
+          { en: "lace garter belt with attached stocking straps", hint: "Waist straps for hosiery" },
+          { en: "silk satin thong panties", hint: "Minimal rear coverage" },
+          { en: "translucent mesh babydoll nightgown", hint: "Flowing light chemise" },
+          { en: "unhooked bra hanging loosely", hint: "Partially removed brassiere" }
+        ]
+      },
+      {
+        idx: 26, catEn: "Legwear & Stockings", slot: "Fashion",
+        tags: [
+          { en: "black over-knee thigh-high socks", hint: "Opaque thigh-highs" },
+          { en: "sheer 20-denier black pantyhose", hint: "Transparent nylon tights" },
+          { en: "intricate fishnet stockings", hint: "Diamond lattice mesh" },
+          { en: "absolute territory gap between skirt and thighhighs", hint: "Bare thigh skin margin" },
+          { en: "white lace-trimmed stay-up stockings", hint: "Decorative silicone-top hosiery" }
+        ]
+      },
+      {
+        idx: 27, catEn: "Footwear & Shoes", slot: "Fashion",
+        tags: [
+          { en: "pointed-toe black stiletto high heels", hint: "Tall slender pumps" },
+          { en: "strappy ankle-wrap platform sandals", hint: "Elevated open sandals" },
+          { en: "polished leather knee-high riding boots", hint: "Tall glossy leather boots" },
+          { en: "bare feet with pink polished toenails", hint: "Natural pedicure soles" }
+        ]
+      },
+      {
+        idx: 28, catEn: "Jewelry & Accessories", slot: "Fashion",
+        tags: [
+          { en: "black velvet choker with silver pendant", hint: "Fitted neckband" },
+          { en: "fine gold chain necklace resting on collarbone", hint: "Minimalist neck chain" },
+          { en: "round thin-framed wire glasses", hint: "Subtle optical frames" },
+          { en: "elbow-length silk opera gloves", hint: "Formal long gloves" },
+          { en: "wide leather waist belt accentuating silhouette", hint: "Waist-cinching accessory" }
+        ]
+      },
+      {
+        idx: 29, catEn: "Piercings & Body Art", slot: "Subject",
+        tags: [
+          { en: "sparkling navel belly button piercing", hint: "Jeweled belly ring" },
+          { en: "delicate botanical line-art tattoo along ribcage", hint: "Fine-line floral ink" },
+          { en: "multiple gold cartilage ear piercings", hint: "Helix and lobe studs" },
+          { en: "intricate full sleeve tattoo down arm", hint: "Extensive arm artwork" }
+        ]
+      },
+      {
+        idx: 30, catEn: "State of Undress & Exposure", slot: "Pose",
+        tags: [
+          { en: "skirt lifted high to waist with both hands", hint: "Deliberate hem lift" },
+          { en: "shirt pulled up biting collar revealing breasts", hint: "Raised hemline reveal" },
+          { en: "dress strap slipping off shoulder", hint: "Sensual shoulder exposure" },
+          { en: "panties hooked on one ankle", hint: "Partially shed undergarment" },
+          { en: "clothing disheveled and open at chest", hint: "Unbuttoned disarray" }
+        ]
+      },
+      {
+        idx: 31, catEn: "Static Poses & Seated", slot: "Pose",
+        tags: [
+          { en: "standing in classical contrapposto posture", hint: "Weight on one hip" },
+          { en: "sitting gracefully on chair with legs crossed", hint: "Elegant cross-legged posture" },
+          { en: "kneeling upright on soft bed", hint: "Erect kneeling stance" },
+          { en: "lying on back sprawled out across white sheets", hint: "Supine horizontal pose" },
+          { en: "curled up on side in fetal position", hint: "Curled side recumbency" }
+        ]
+      },
+      {
+        idx: 32, catEn: "Dynamic Motion & Action", slot: "Pose",
+        tags: [
+          { en: "turning around looking over shoulder mid-stride", hint: "Glance during movement" },
+          { en: "stretching both arms high overhead with arched back", hint: "Torso-lengthening stretch" },
+          { en: "running with skirt fluttering in the wind", hint: "Motion-blurred fabric dynamic" },
+          { en: "gently tucking a loose strand of hair behind ear", hint: "Intimate small gesture" }
+        ]
+      },
+      {
+        idx: 33, catEn: "Sensual & Erotic Poses", slot: "Pose",
+        tags: [
+          { en: "on all fours with hips raised high", hint: "Arched all-fours pose" },
+          { en: "lying on back with knees pulled back toward chest", hint: "Elevated pelvic framing" },
+          { en: "straddling lap facing forward", hint: "Upright straddle alignment" },
+          { en: "arched spine presenting buttocks to camera", hint: "Rear-emphasized back arch" },
+          { en: "legs spread wide apart revealing center", hint: "Open seated pose" }
+        ]
+      },
+      {
+        idx: 34, catEn: "Hands & Gestures", slot: "Pose",
+        tags: [
+          { en: "one hand resting casually on hip", hint: "Relaxed hip placement" },
+          { en: "fingers gently resting on bare collarbone", hint: "Sensory upper chest touch" },
+          { en: "clutching the white bedsheet tightly in fists", hint: "Tense fabric grip" },
+          { en: "index finger touching lower lip thoughtfully", hint: "Reflective lip contact" },
+          { en: "both arms crossed pushing breasts together", hint: "Cleavage-accentuating pose" }
+        ]
+      },
+      {
+        idx: 35, catEn: "Camera Angle & Framing", slot: "Style",
+        tags: [
+          { en: "intimate close-up portrait of face and collarbone", hint: "Tight facial crop" },
+          { en: "medium cowboy shot from mid-thigh up", hint: "Standard cinematic mid-shot" },
+          { en: "dramatic low angle shot looking up at subject", hint: "Imposing upward perspective" },
+          { en: "high angle shot looking down from above", hint: "Vulnerable overhead viewpoint" },
+          { en: "first person POV shot looking down at body", hint: "Subjective eye-level angle" },
+          { en: "dutch angle tilted horizon for tension", hint: "Canted asymmetrical frame" }
+        ]
+      },
+      {
+        idx: 36, catEn: "Camera Optics & Lenses", slot: "Style",
+        tags: [
+          { en: "shot on 85mm f/1.4 prime portrait lens", hint: "Natural facial compression" },
+          { en: "razor-thin shallow depth of field with creamy circular bokeh", hint: "Soft blurred background" },
+          { en: "sharp focus on iris with visible catchlights", hint: "Pinpoint pupil clarity" },
+          { en: "subtle anamorphic horizontal streak lens flare", hint: "Cinematic streak artifact" },
+          { en: "wide 24mm environmental perspective", hint: "Deep contextual space" }
+        ]
+      },
+      {
+        idx: 37, catEn: "Lighting & Atmosphere", slot: "Scene",
+        tags: [
+          { en: "warm golden hour sunlight streaming sideways", hint: "Warm low-angle sun" },
+          { en: "soft diffused morning window light with sheer curtains", hint: "Gentle wrapped illumination" },
+          { en: "high-contrast cinematic chiaroscuro shadows", hint: "Deep dramatic lighting ratio" },
+          { en: "cyan and magenta neon rim lighting cutting through dark", hint: "Dual-tone cyberpunk edge" },
+          { en: "dim candlelit ambient glow with flickering shadows", hint: "Warm intimate firelight" }
+        ]
+      },
+      {
+        idx: 38, catEn: "Environment & Setting", slot: "Scene",
+        tags: [
+          { en: "cozy sunlit bedroom with rumpled white bed", hint: "Warm domestic room" },
+          { en: "traditional Japanese tatami room with shoji screens", hint: "Minimalist wooden interior" },
+          { en: "rain-drenched neon-lit Tokyo back alley at night", hint: "Urban wet asphalt street" },
+          { en: "deserted tropical beach at twilight", hint: "Secluded sand and water" },
+          { en: "luxurious penthouse hotel suite overlooking city skyline", hint: "Glass high-rise view" },
+          { en: "dusty sun-drenched greenhouse filled with overgrown ferns", hint: "Botanical glasshouse" }
+        ]
+      },
+      {
+        idx: 39, catEn: "Weather & Environment", slot: "Scene",
+        tags: [
+          { en: "gentle rain drumming against window glass", hint: "Rain streaks on surface" },
+          { en: "swirling cherry blossom petals on spring breeze", hint: "Drifting floral particles" },
+          { en: "thick volumetric fog illuminated by light shafts", hint: "Atmospheric depth haze" },
+          { en: "clear summer sky with distant towering cumulus clouds", hint: "Bright daylight horizon" }
+        ]
+      },
+      {
+        idx: 40, catEn: "Artifact Suppression (Negative)", slot: "Negative",
+        tags: [
+          { en: "deformed hands, extra fingers, fused fingers, missing fingers", hint: "Hand anatomy remediation" },
+          { en: "plastic skin, waxy skin, airbrushed, cartoonish, 3d render", hint: "Anti-synthetic skin filter" },
+          { en: "blurry, low quality, jpeg artifacts, watermark, signature, logo", hint: "Digital junk reduction" },
+          { en: "distorted face, mismatched eyes, doubled pupils, wall-eyed", hint: "Facial symmetry correction" },
+          { en: "extra limbs, cloned legs, mutated arms, floating body parts", hint: "Limb redundancy cleanup" }
+        ]
+      }
+    ];
+
+    let selectedSet = new Map();
+    let historyStack = [];
+    let historyIndex = -1;
+    let activeMode = 'flux';
+
+    const catNav = document.getElementById('catNav');
+    const matrixContainer = document.getElementById('matrixContainer');
+    const promptBox = document.getElementById('promptBox');
+    const btnUndo = document.getElementById('btnUndo');
+    const btnRedo = document.getElementById('btnRedo');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnClear = document.getElementById('btnClear');
+    const btnSend = document.getElementById('btnSend');
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    const toast = document.getElementById('toast');
+    const dispatchModal = document.getElementById('dispatchModal');
+    const modalClose = document.getElementById('modalClose');
+
+    const inspectorModal = document.getElementById('inspectorModal');
+    const insClose = document.getElementById('insClose');
+    const insTitle = document.getElementById('insTitle');
+    const insSub = document.getElementById('insSub');
+    const insWeightSlider = document.getElementById('insWeightSlider');
+    const weightVal = document.getElementById('weightVal');
+    const insResetWeight = document.getElementById('insResetWeight');
+    const insPreview = document.getElementById('insPreview');
+    const insApply = document.getElementById('insApply');
+    const insRemove = document.getElementById('insRemove');
+    let activeInspectorTag = null;
+    let activeInspectorMode = 'comma';
+    let activeInspectorWeight = 1.0;
+
+    function init() {
+      renderNav();
+      renderMatrix();
+      saveHistory();
+
+      searchInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        searchClear.style.display = val ? 'block' : 'none';
+        renderMatrix(val);
+      });
+
+      searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        renderMatrix('');
+      });
+
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          activeMode = e.target.dataset.mode;
+          updatePromptBox();
+        });
+      });
+
+      btnUndo.addEventListener('click', undo);
+      btnRedo.addEventListener('click', redo);
+      btnClear.addEventListener('click', clearAll);
+      btnCopy.addEventListener('click', copyPrompt);
+      btnSend.addEventListener('click', () => dispatchModal.classList.add('open'));
+      modalClose.addEventListener('click', () => dispatchModal.classList.remove('open'));
+
+      document.getElementById('btnSort').addEventListener('click', sortTagsByPrecedence);
+      document.getElementById('btnProse').addEventListener('click', () => {
+        activeMode = 'flux';
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'flux'));
+        updatePromptBox();
+        showToast("Switched to Natural Flux Prose");
+      });
+
+      document.querySelectorAll('.gen-card').forEach(card => {
+        card.addEventListener('click', () => {
+          dispatchToGenerator(card.dataset.url);
+        });
+      });
+
+      insClose.onclick = closeInspector;
+      inspectorModal.onclick = (e) => { if (e.target === inspectorModal) closeInspector(); };
+
+      document.querySelectorAll('.ins-btn').forEach(b => {
+        b.onclick = () => {
+          document.querySelectorAll('.ins-btn').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          activeInspectorMode = b.dataset.sep;
+          updateInspectorPreview();
+        };
+      });
+
+      insWeightSlider.oninput = (e) => {
+        activeInspectorWeight = parseFloat(e.target.value);
+        weightVal.textContent = activeInspectorWeight.toFixed(2);
+        updateInspectorPreview();
+      };
+
+      insResetWeight.onclick = () => {
+        activeInspectorWeight = 1.0;
+        insWeightSlider.value = "1.0";
+        weightVal.textContent = "1.0";
+        updateInspectorPreview();
+      };
+
+      insApply.onclick = () => {
+        if (activeInspectorTag) {
+          activeInspectorTag.space = (activeInspectorMode === 'space');
+          activeInspectorTag.curly = (activeInspectorMode === 'curly');
+          activeInspectorTag.weight = activeInspectorWeight;
+          selectedSet.set(activeInspectorTag.en, activeInspectorTag);
+          saveHistory();
+          renderMatrix(searchInput.value.trim());
+          updatePromptBox();
+        }
+        closeInspector();
+      };
+
+      insRemove.onclick = () => {
+        if (activeInspectorTag) {
+          selectedSet.delete(activeInspectorTag.en);
+          saveHistory();
+          renderMatrix(searchInput.value.trim());
+          updatePromptBox();
+        }
+        closeInspector();
+      };
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+    }
+
+    function renderNav() {
+      catNav.innerHTML = '';
+      KENZEN_MATRIX.forEach(cat => {
+        const pill = document.createElement('div');
+        pill.className = 'cat-pill';
+        pill.innerHTML = `<span>#${cat.idx}</span> ${cat.catEn}`;
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const target = document.getElementById(`cat_sec_${cat.idx}`);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+        catNav.appendChild(pill);
+      });
+    }
+
+    function renderMatrix(filterQuery = '') {
+      matrixContainer.innerHTML = '';
+      const query = filterQuery.toLowerCase();
+
+      KENZEN_MATRIX.forEach(cat => {
+        const matchingTags = cat.tags.filter(t => 
+          !query || t.en.toLowerCase().includes(query) || (t.hint && t.hint.toLowerCase().includes(query))
+        );
+
+        if (matchingTags.length === 0) return;
+
+        const group = document.createElement('div');
+        group.className = 'category-group';
+        group.id = `cat_sec_${cat.idx}`;
+
+        const header = document.createElement('div');
+        header.className = 'group-header';
+        header.innerHTML = `<span>#${cat.idx}</span> ${cat.catEn}`;
+        group.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'tag-grid';
+
+        matchingTags.forEach(t => {
+          const chip = document.createElement('div');
+          chip.className = 'tag-chip' + (cat.catEn.includes('Mature') ? ' mature' : '');
+          if (selectedSet.has(t.en)) chip.classList.add('selected');
+
+          chip.innerHTML = `
+            <span class="tag-en">${t.en}</span>
+            <span class="tag-hint">${t.hint || cat.slot}</span>
+          `;
+
+          let pressTimer = null;
+          chip.addEventListener('touchstart', () => {
+            pressTimer = setTimeout(() => {
+              openInspector(cat, t);
+            }, 380);
+          }, { passive: true });
+
+          chip.addEventListener('touchend', () => clearTimeout(pressTimer));
+          chip.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+          chip.addEventListener('click', () => toggleTag(cat, t, false));
+          chip.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            openInspector(cat, t);
+          });
+
+          grid.appendChild(chip);
+        });
+
+        group.appendChild(grid);
+        matrixContainer.appendChild(group);
+      });
+    }
+
+    function toggleTag(cat, tag, addWithSpace = false) {
+      if (selectedSet.has(tag.en)) {
+        selectedSet.delete(tag.en);
+      } else {
+        selectedSet.set(tag.en, {
+          idx: cat.idx,
+          slot: cat.slot,
+          en: tag.en,
+          hint: tag.hint,
+          space: addWithSpace,
+          curly: false,
+          weight: 1.0
+        });
+      }
+      saveHistory();
+      renderMatrix(searchInput.value.trim());
+      updatePromptBox();
+    }
+
+    function openInspector(cat, tag) {
+      let record = selectedSet.get(tag.en);
+      if (!record) {
+        record = {
+          idx: cat.idx,
+          slot: cat.slot,
+          en: tag.en,
+          hint: tag.hint,
+          space: false,
+          curly: false,
+          weight: 1.0
+        };
+      }
+      activeInspectorTag = record;
+      activeInspectorWeight = record.weight || 1.0;
+      activeInspectorMode = record.space ? 'space' : (record.curly ? 'curly' : 'comma');
+
+      insTitle.textContent = record.en;
+      insSub.textContent = `#${cat.idx} ${cat.catEn}`;
+      insWeightSlider.value = activeInspectorWeight;
+      weightVal.textContent = activeInspectorWeight.toFixed(2);
+
+      document.querySelectorAll('.ins-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.sep === activeInspectorMode);
+      });
+
+      updateInspectorPreview();
+      inspectorModal.classList.add('open');
+    }
+
+    function closeInspector() {
+      inspectorModal.classList.remove('open');
+      activeInspectorTag = null;
+    }
+
+    function updateInspectorPreview() {
+      if (!activeInspectorTag) return;
+      let text = activeInspectorTag.en;
+      if (activeInspectorWeight !== 1.0) {
+        text = `(${text}:${activeInspectorWeight.toFixed(2)})`;
+      }
+      if (activeInspectorMode === 'curly') {
+        text = `{${text}|alternative}`;
+      }
+      insPreview.textContent = (activeInspectorMode === 'space' ? " [space] " : " [comma] ") + text;
+    }
+
+    function sortTagsByPrecedence() {
+      const items = Array.from(selectedSet.values());
+      items.sort((a, b) => a.idx - b.idx);
+      selectedSet.clear();
+      items.forEach(it => selectedSet.set(it.en, it));
+      saveHistory();
+      updatePromptBox();
+      showToast("Sorted by 41-Category Precedence");
+    }
+
+    function updatePromptBox() {
+      const items = Array.from(selectedSet.values());
+      if (items.length === 0) {
+        promptBox.value = "";
+        return;
+      }
+
+      if (activeMode === 'flux') {
+        promptBox.value = synthesizeFluxProse(items);
+      } else if (activeMode === 'mack') {
+        promptBox.value = synthesizeMackSlots(items);
+      } else if (activeMode === 'danbooru') {
+        promptBox.value = items.map(formatTagText).join(", ");
+      } else if (activeMode === 'dynamic') {
+        promptBox.value = "A scene with {" + items.map(formatTagText).join("|") + "}";
+      }
+    }
+
+    function formatTagText(i) {
+      let t = i.en;
+      if (i.weight && i.weight !== 1.0) {
+        t = `(${t}:${i.weight.toFixed(2)})`;
+      }
+      return t;
+    }
+
+    function synthesizeFluxProse(items) {
+      const style = items.filter(i => [1, 35, 36, 40].includes(i.idx)).map(formatTagText).join(", ");
+      const subject = items.filter(i => [2, 3, 4, 10].includes(i.idx)).map(formatTagText).join(" ");
+      const anatomy = items.filter(i => [5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16].includes(i.idx)).map(formatTagText).join(", ");
+      const pose = items.filter(i => [31, 32, 33, 34].includes(i.idx)).map(formatTagText).join(" and ");
+      const wardrobe = items.filter(i => [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].includes(i.idx)).map(formatTagText).join(", ");
+      const scene = items.filter(i => [37, 38, 39].includes(i.idx)).map(formatTagText).join(", ");
+
+      const p = [];
+      if (style) p.push(`${style} of`);
+      if (subject) p.push(subject);
+      else p.push("a woman");
+
+      if (anatomy) p.push(`with ${anatomy}`);
+      if (pose) p.push(`, ${pose}`);
+      if (wardrobe) p.push(`, wearing ${wardrobe}`);
+      if (scene) p.push(`, set in ${scene}`);
+
+      return p.join(" ").replace(/\s+,/g, ",").replace(/,\s*,/g, ",");
+    }
+
+    function synthesizeMackSlots(items) {
+      const style = items.filter(i => i.slot === "Style").map(formatTagText).join(", ");
+      const subject = items.filter(i => i.slot === "Subject").map(formatTagText).join(", ");
+      const fashion = items.filter(i => i.slot === "Fashion").map(formatTagText).join(", ");
+      const scene = items.filter(i => i.slot === "Scene").map(formatTagText).join(", ");
+      const pose = items.filter(i => i.slot === "Pose").map(formatTagText).join(", ");
+      const negative = items.filter(i => i.slot === "Negative").map(formatTagText).join(", ");
+
+      const blocks = [];
+      if (style) blocks.push(`[Style]: ${style}`);
+      if (subject) blocks.push(`[Subject]: ${subject}`);
+      if (pose) blocks.push(`[Pose]: ${pose}`);
+      if (fashion) blocks.push(`[Fashion]: ${fashion}`);
+      if (scene) blocks.push(`[Scene]: ${scene}`);
+      if (negative) blocks.push(`[Negative]: ${negative}`);
+
+      return blocks.join("\n\n");
+    }
+
+    function saveHistory() {
+      const state = Array.from(selectedSet.entries());
+      historyStack = historyStack.slice(0, historyIndex + 1);
+      historyStack.push(state);
+      historyIndex++;
+      updateHistoryButtons();
+    }
+
+    function undo() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        restoreState(historyStack[historyIndex]);
+      }
+    }
+
+    function redo() {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        restoreState(historyStack[historyIndex]);
+      }
+    }
+
+    function restoreState(state) {
+      selectedSet = new Map(state);
+      renderMatrix(searchInput.value.trim());
+      updatePromptBox();
+      updateHistoryButtons();
+    }
+
+    function updateHistoryButtons() {
+      btnUndo.disabled = (historyIndex <= 0);
+      btnRedo.disabled = (historyIndex >= historyStack.length - 1);
+    }
+
+    function clearAll() {
+      if (selectedSet.size === 0) return;
+      selectedSet.clear();
+      saveHistory();
+      renderMatrix(searchInput.value.trim());
+      updatePromptBox();
+      showToast("Cockpit cleared");
+    }
+
+    function copyPrompt() {
+      if (!promptBox.value) return;
+      navigator.clipboard.writeText(promptBox.value).then(() => {
+        showToast("Prompt copied to clipboard");
+      });
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function dispatchToGenerator(generatorUrl) {
+      const prompt = encodeURIComponent(promptBox.value.trim());
+      navigator.clipboard.writeText(promptBox.value.trim()).catch(() => {});
+      const targetUrl = `${generatorUrl}?p=${prompt}#prompt=${prompt}`;
+      window.open(targetUrl, '_blank');
+      dispatchModal.classList.remove('open');
+      showToast("Opening Perchance Studio");
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

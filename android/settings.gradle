@@ -1,0 +1,2 @@
+rootProject.name = 'KENZEN-Cockpit'
+include ':app'
